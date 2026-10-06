@@ -905,7 +905,7 @@ export function Unit99() {
             <a className="hud-link" href="/unit99/sounds/silent-loop.wav" download="silent-loop.wav">
               [SAVE SILENT LOOP]
             </a>
-            <a className="hud-link" href="https://media.githubusercontent.com/media/austindrew2021-code/UNIT99-E_OS/main/public/unit99/sounds/silent.m3u">
+            <a className="hud-link" href="https://raw.githubusercontent.com/austindrew2021-code/UNIT99-E_OS/main/public/unit99/sounds/silent.m3u">
               [SILENT PLAYLIST]
             </a>
             <Transport onPrev={() => showTrack(trackIndex - 1)} onPlay={toggleRadio} onNext={() => showTrack(trackIndex + 1)} />
