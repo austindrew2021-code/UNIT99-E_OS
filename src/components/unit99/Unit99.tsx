@@ -744,6 +744,22 @@ export function Unit99() {
     );
   };
 
+  const saveSilent = async () => {
+    const response = await fetch("/unit99/sounds/silent-loop.wav");
+    const blob = await response.blob();
+    const file = new File([blob], "silent-loop.wav", { type: "audio/wav" });
+    if (navigator.canShare?.({ files: [file] })) {
+      await navigator.share({ files: [file], title: "silent-loop.wav" }).catch(() => undefined);
+      return;
+    }
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "silent-loop.wav";
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   const loadTracks = (list: FileList | null) => {
     if (!list?.length) return;
     trackUrls.current.forEach((url) => URL.revokeObjectURL(url));
@@ -902,12 +918,9 @@ export function Unit99() {
               [LOAD AUDIO]
               <input hidden type="file" accept="audio/*,.mp3,.ogg,.wav,.flac,.m4a" multiple onChange={(event) => loadTracks(event.target.files)} />
             </label>
-            <a className="hud-link" href="/unit99/sounds/silent-loop.wav" download="silent-loop.wav">
+            <button type="button" className="hud-link" onClick={() => void saveSilent()}>
               [SAVE SILENT LOOP]
-            </a>
-            <a className="hud-link" href="https://raw.githubusercontent.com/austindrew2021-code/UNIT99-E_OS/main/public/unit99/sounds/silent.m3u">
-              [SILENT PLAYLIST]
-            </a>
+            </button>
             <Transport onPrev={() => showTrack(trackIndex - 1)} onPlay={toggleRadio} onNext={() => showTrack(trackIndex + 1)} />
           </section>
         )}
