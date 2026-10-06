@@ -1,0 +1,182 @@
+# Configurable Settings
+
+All settings are found under `SET`.
+
+## DISPLAY
+
+Configurable:
+
+- Theme color: `GREEN`, `AMBER`, `WHITE`, or Electric Blue (`BLUE`).
+- Auto theme based on time of day.
+- Day color, including Electric Blue.
+- Night color, including Electric Blue.
+- Day start hour.
+- Night start hour.
+- Text size, from 70% to 150%.
+- UI scale, from 70% to 150%.
+- Vault Boy Pip slideshow interval, from 0.5s to 10s.
+- Vault Boy Pip image scale, from 100% to 150%.
+
+## MAP
+
+Configurable:
+
+- Primary map region.
+- Active map regions.
+- Favorite map regions.
+- Downloaded map packages.
+- Manual file-loaded map packages.
+- First-class custom `.map` and `.poi` packages.
+- Automatic grouping of matching filenames, such as `nevada.map` and `nevada.poi`.
+- Enable/disable, make primary, favorite, and delete actions for custom entries.
+- Shared-folder custom import from `PipCarRadio/custom_maps`.
+- Package deletion.
+
+Catalog and custom maps can remain enabled together. With a GPS fix, the Map and Road View labels automatically use the enabled map covering the current position, with custom map domains taking priority.
+
+## AUDIO
+
+Configurable:
+
+- FX volume, used for Pip-OS UI sounds and related effects.
+- Live Radio waveform capture for both the Radio and dashboard visualizers.
+- Live capture refresh rate, from 5 FPS to 60 FPS.
+- Visualizer sensitivity.
+- Waveform height.
+- Waveform noise gate.
+- Attack and release response, adjustable up to 3.0.
+- Equalizer bar count and segment count.
+- Spectrum bar count, segment count, and maximum frequency.
+- Reset visualizer tuning.
+
+The default visualizer tuning is:
+
+| Control | Default |
+|---|---:|
+| Sensitivity | 1.0 |
+| Waveform height | 100% |
+| Noise gate | 4% |
+| Attack | 1.8 |
+| Release | 1.8 |
+| Equalizer bars | 20 |
+| Equalizer segments | 10 |
+| Spectrum bars | 20 |
+| Spectrum segments | 12 |
+| Spectrum maximum frequency | 3 kHz |
+
+The old separate bass-sensitivity control is no longer used; the visualizers retain the full low-frequency response.
+
+## HUD
+
+Configurable:
+
+- GPS units: `MPH` or `KPH`.
+- Show/hide top speed.
+- Show/hide GPS indicator.
+- Show/hide Bluetooth indicator.
+- Show/hide CPU usage.
+- Show/hide memory usage.
+
+## EFFECTS
+
+Configurable:
+
+- Scan lines.
+- CRT screen bleed.
+- Low power mode.
+- Roadside Pip-Boys in Road View.
+- Roadside Pip-Boy size, from 50% to 400% (default 200%).
+- Random section phosphor burst.
+- Random phosphor probability, from 0% to 100%.
+- Vault Boy watermark.
+- Vault-Tec logo watermark.
+- Vault-Tec name watermark.
+- Middle watermark size, from 50% to 300%.
+- Watermark opacity, from 0% to 200%.
+
+Roadside Pip-Boys can appear at any GPS speed above the 1 km/h movement threshold. There is no separate spawn-probability control; eligible appearances use the fixed behavior.
+
+## APPS
+
+Configurable:
+
+- Notification access shortcut for external media sessions.
+- Four media shortcut apps for dashboard media widgets.
+- Speed touch action.
+- Four speedometer shortcut apps.
+- Four top-bar shortcut apps under the Vault-Tec logo menu.
+
+Speed touch actions:
+
+- `SHOW RECENTS MENU`
+- `JUMP TO LAST RECENT APP`
+- `OPEN SYSTEM RECENTS`
+- `OPEN ANDROID AUTO`
+- `OPEN CARPLAY`
+- `OPEN CUSTOM PACKAGE / ACTIVITY`
+
+For the custom action, enter an Android package such as `com.example.app` or an explicit `package/activity` target. If the explicit activity cannot open, Pip-OS falls back to launching the package.
+
+## OBD-II
+
+Configurable:
+
+- Scan nearby Classic Bluetooth and BLE devices while also showing remembered paired devices.
+- Select a discovered device for direct ELM327 connection and validation.
+- Preferred saved Bluetooth OBD-II device name and MAC address.
+- Auto-connect on launch.
+- Auto-connect retry interval, from 5 seconds to 300 seconds.
+- Manual connect/disconnect.
+- Read DTCs when connected.
+
+Device rows distinguish direct and paired results and show scan/connection errors. A successful validation saves the adapter automatically. Connections use the compatibility sequence insecure SPP, secure SPP, explicit bonding when required, then one final secure SPP retry. On head units that expose Android Companion Device Setup, the system-managed Bluetooth picker is used as a fallback when app-owned Classic discovery is rejected.
+
+## STATS
+
+Configurable gauge maximums:
+
+- Max speed, 50 to 500 KPH.
+- Max RPM, 1000 to 15000.
+- Max coolant, 80C to 180C.
+- Max voltage, 8V to 30V.
+- Max intake temperature, 20C to 200C.
+- Max airflow, 50 to 1000 g/s.
+
+Configurable warning behavior:
+
+- Radiation red alert audio.
+- Radiation ramp multiplier, 0.1x to 2.0x.
+- RPM red warning, 1000 to 15000 RPM.
+- Low voltage warning, 8V to 20V.
+- High voltage warning, 8V to 30V.
+- Coolant hot warning, 80C to 140C.
+
+The `STATS` center image is configured directly on the Stats screen, not in this Settings category. Long-press the center image to select a preset or transparent custom PNG, remove an imported image, and choose `MONOCHROME` or `COLOR + TINT` composition.
+
+## DEV
+
+Advanced/testing settings:
+
+- Mock GPS routes: `SPAIN ROAD RUN`, `CALIFORNIA HIGHWAY`, and `LAS VEGAS CITY`.
+- Demo OBD data.
+- Disable boot preloading.
+
+Mock-route GPS speed drives Road View for testing. Demo OBD speed affects OBD displays but does not move Road View.
+
+## SYSTEM
+
+Configurable:
+
+- Exit launcher. This closes/removes the Pip-OS task so you can return to another launcher or system flow.
+
+## ABOUT
+
+Shows:
+
+- Project information.
+- App version.
+- Donate button before the version information.
+- Updates link to the [UNIT 99-E OS GitHub releases page](https://github.com/ShadCimm/UNIT99-E_OS/releases).
+- Support/social links.
+- Safety and warranty notes.
+- Fan-project rights/disclaimer text.

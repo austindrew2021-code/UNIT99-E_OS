@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#020c06">
+<title>SR-LINK 3000</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect fill='%23020c06' width='32' height='32'/%3E%3Cpath d='M6 22 V10 H10 V18 H16 V10 H20 V22 H16 V20 H10 V22 Z' fill='%2300ff66'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap">
+<style>
+  :root { --ink:#00ff66; --ink-dim:rgba(0,255,102,.22); --void:#020c06; --alert:#ff3333; --glow:0 0 8px rgba(0,255,102,.55); }
+  body.amber { --ink:#ffb600; --ink-dim:rgba(255,182,0,.24); --void:#0c0800; --glow:0 0 8px rgba(255,182,0,.5); }
+  * { box-sizing:border-box; }
+  html, body { height:100%; margin:0; background:#000; color:var(--ink); font-family:"Share Tech Mono", ui-monospace, monospace; }
+  button, a { font:inherit; color:inherit; }
+  button { cursor:pointer; touch-action:manipulation; }
+  .crt { height:100dvh; display:flex; flex-direction:column; gap:8px; padding:10px 12px 8px; background:var(--void); position:relative; overflow:hidden; text-shadow:var(--glow); }
+  .crt::after { content:""; pointer-events:none; position:absolute; inset:0; background:linear-gradient(rgba(0,0,0,0) 50%, rgba(0,0,0,.28) 50%); background-size:100% 4px; z-index:4; opacity:.55; }
+  .bezel { position:relative; z-index:2; display:flex; flex-direction:column; gap:8px; min-height:0; flex:1; }
+  .topbar, .foot { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .topbar { border-bottom:2px solid var(--ink); padding-bottom:8px; }
+  .foot { border-top:2px solid var(--ink); padding-top:6px; font-size:.82rem; letter-spacing:.04em; }
+  .brand-mark { font-size:clamp(1.15rem, 2.2vw, 1.65rem); letter-spacing:.12em; line-height:1; }
+  .brand-sub { margin-top:4px; font-size:.78rem; letter-spacing:.16em; opacity:.8; }
+  .tabs { display:flex; gap:6px; overflow-x:auto; }
+  .tab, .ghost, .app-card, .step { background:transparent; border:1px solid var(--ink); letter-spacing:.06em; text-shadow:none; text-decoration:none; }
+  .tab, .ghost { min-height:44px; padding:8px 12px; }
+  .tab.is-on, .tab:hover, .app-card:hover, .ghost:hover { background:var(--ink); color:var(--void); }
+  .stage { flex:1; min-height:0; overflow:auto; border:1px solid var(--ink-dim); padding:12px; background:color-mix(in srgb, var(--void) 78%, black); }
+  .panel { display:none; } .panel.on { display:block; }
+  .kicker { font-size:.78rem; letter-spacing:.18em; opacity:.75; margin:0; }
+  h2 { font-size:clamp(1.2rem, 2vw, 1.55rem); letter-spacing:.08em; font-weight:400; margin:2px 0 10px; }
+  .stat-grid, .app-grid, .setup-grid { display:grid; gap:12px; }
+  .stat-grid { grid-template-columns:1.15fr .85fr; }
+  .app-grid { grid-template-columns:1fr 1fr; }
+  .setup-grid { margin-top:12px; }
+  .plate, .meter, .app-card, .step { border:1px solid var(--ink); padding:12px; background:color-mix(in srgb, var(--ink) 6%, transparent); }
+  .row { display:flex; justify-content:space-between; gap:12px; padding:7px 0; border-bottom:1px solid var(--ink-dim); }
+  .bar { height:14px; border:1px solid var(--ink); padding:2px; min-width:120px; }
+  .bar > i { display:block; height:100%; width:100%; background:var(--ink); }
+  .down { color:var(--alert); text-shadow:0 0 6px rgba(255,51,51,.65); }
+  .tape-scroll { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; margin-top:8px; }
+  th, td { text-align:left; padding:8px; border-bottom:1px solid var(--ink-dim); white-space:nowrap; }
+  th { border-bottom:2px solid var(--ink); font-weight:400; letter-spacing:.08em; }
+  .toolbar { display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; }
+  .map-wrap { margin-top:8px; height:min(62dvh, 520px); border:1px solid var(--ink); overflow:hidden; }
+  .map-wrap iframe { width:100%; height:100%; border:0; filter:grayscale(1) sepia(1) hue-rotate(70deg) saturate(5) contrast(1.15) brightness(0.72); }
+  body.amber .map-wrap iframe { filter:invert(88%) sepia(70%) hue-rotate(5deg) saturate(3) contrast(1.15); }
+  .app-card { display:flex; flex-direction:column; justify-content:center; min-height:92px; gap:4px; }
+  small, .muted { opacity:.72; }
+  .note { margin-top:10px; }
+  .step { display:grid; grid-template-columns:auto 1fr; gap:10px; text-align:left; width:100%; }
+  .step.is-done { opacity:.62; }
+  .box { width:22px; height:22px; border:1px solid var(--ink); display:grid; place-items:center; }
+  .url-line { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .url-line code { border:1px solid var(--ink-dim); padding:8px 10px; word-break:break-all; }
+  .blink { animation:pulse 1.6s steps(2,end) infinite; }
+  @keyframes pulse { 50% { opacity:.35; } }
+  .boot { position:absolute; inset:0; z-index:6; background:#000; display:flex; flex-direction:column; justify-content:flex-end; padding:24px; letter-spacing:.08em; }
+  @media (max-width:800px) { .stat-grid, .app-grid { grid-template-columns:1fr; } th, td { padding:8px 4px; } }
+  @media (prefers-reduced-motion:reduce) { .crt::after, .blink { animation:none; } .crt::after { display:none; } }
+</style>
+</head>
+<body>
+<div class="crt">
+  <div class="boot" id="boot">
+    <p>SR-LINK 3000 MK IV</p>
+    <p>CABIN BUS ................ OK</p>
+    <p>S23 ULTRA BRIDGE ......... STANDBY</p>
+    <p class="blink">KUCOIN PUBLIC FEED .... LINKING</p>
+  </div>
+  <div class="bezel">
+    <header class="topbar">
+      <div>
+        <div class="brand-mark">SR-LINK 3000</div>
+        <div class="brand-sub">SENTRA SR · MK IV · DREW, AUSTIN</div>
+      </div>
+      <button class="ghost" id="theme" type="button">COLOR GREEN</button>
+    </header>
+    <nav class="tabs" aria-label="Cabin sections">
+      <button class="tab is-on" type="button" data-tab="stat">STAT</button>
+      <button class="tab" type="button" data-tab="kucoin">KUCOIN</button>
+      <button class="tab" type="button" data-tab="map">MAP</button>
+      <button class="tab" type="button" data-tab="apps">APPS</button>
+      <button class="tab" type="button" data-tab="setup">SETUP</button>
+    </nav>
+    <main class="stage">
+      <section class="panel on" id="stat">
+        <p class="kicker">STATUS</p>
+        <h2>SENTRA SR CABIN</h2>
+        <div class="stat-grid">
+          <div class="plate">
+            <div class="row"><span>OPERATOR</span><b>DREW, AUSTIN</b></div>
+            <div class="row"><span>VEHICLE</span><b>2025 NISSAN SENTRA SR</b></div>
+            <div class="row"><span>DISPLAY</span><b>8 INCH + S23 ULTRA USB</b></div>
+            <div class="row"><span>CHART CENTRE</span><b>MIRAMICHI, NB</b></div>
+            <div class="row"><span>LOCAL</span><b id="stat-clock">00:00:00 AT</b></div>
+          </div>
+          <div class="meter">
+            <div class="row"><span>LINK</span><span class="bar" aria-hidden="true"><i></i></span></div>
+            <div class="row"><span>INTEGRITY</span><b>100</b></div>
+            <div class="row"><span>RADS</span><b>0</b></div>
+            <div class="row"><span>AP</span><b>110 / 110</b></div>
+            <div class="row"><span>POWER</span><b>ONLINE</b></div>
+            <div class="row"><span>ROUND TRIP</span><b id="ping">—</b></div>
+            <div class="row"><span>KUCOIN</span><b id="stat-feed">FEED LINKING</b></div>
+          </div>
+        </div>
+      </section>
+      <section class="panel" id="kucoin">
+        <div class="toolbar">
+          <div>
+            <p class="kicker">PUBLIC TAPE</p>
+            <h2>KUCOIN</h2>
+          </div>
+          <div class="tabs">
+            <button class="tab is-on" type="button" id="spot-btn">SPOT</button>
+            <button class="tab" type="button" id="fut-btn">FUTURES</button>
+          </div>
+        </div>
+        <div class="tape-scroll" id="tape"></div>
+        <p class="muted note">Public market data only. Orders stay in the KuCoin app on the phone.</p>
+      </section>
+      <section class="panel" id="map">
+        <div class="toolbar">
+          <div>
+            <p class="kicker">LOCAL RECON</p>
+            <h2>MIRAMICHI GRID</h2>
+          </div>
+          <button class="ghost" type="button" id="fix">PHONE FIX</button>
+        </div>
+        <p id="coords">47.0280° N · 65.4650° W · CITY CENTRE</p>
+        <div class="map-wrap"><iframe id="mapframe" title="Miramichi recon map" loading="lazy"></iframe></div>
+      </section>
+      <section class="panel" id="apps">
+        <p class="kicker">QUICK LAUNCH</p>
+        <h2>CABIN APPS</h2>
+        <div class="app-grid">
+          <a class="app-card" href="https://www.kucoin.com/trade/BTC-USDT" target="_blank" rel="noreferrer"><b>[ KUCOIN TRADE ]</b><small>BTC-USDT ticket on the phone</small></a>
+          <a class="app-card" href="https://m.youtube.com" target="_blank" rel="noreferrer"><b>[ YOUTUBE ]</b><small>Opens the player</small></a>
+          <a class="app-card" href="https://open.spotify.com" target="_blank" rel="noreferrer"><b>[ SPOTIFY ]</b><small>Web player</small></a>
+          <a class="app-card" href="https://www.google.com/maps/search/?api=1&query=Miramichi,+NB" target="_blank" rel="noreferrer"><b>[ GOOGLE MAPS ]</b><small>Miramichi, NB</small></a>
+        </div>
+      </section>
+      <section class="panel" id="setup">
+        <p class="kicker">S23 ULTRA → SENTRA SR</p>
+        <h2>BRIDGE CHECKLIST</h2>
+        <div class="url-line">
+          <code id="pages-url">https://austindrew2021-code.github.io/</code>
+          <button class="ghost" type="button" id="copy">COPY</button>
+        </div>
+        <div class="setup-grid" id="steps"></div>
+      </section>
+    </main>
+    <footer class="foot">
+      <span id="clock">00:00:00 AT</span>
+      <span id="feed" class="blink">FEED LINKING</span>
+      <span>S23 ULTRA · FERMATA TARGET</span>
+    </footer>
+  </div>
+</div>
+<script>
+const PAGES = "https://austindrew2021-code.github.io/";
+const SPOTS = ["BTC-USDT", "ETH-USDT", "SOL-USDT", "KCS-USDT"];
+const FUTS = ["XBTUSDTM", "ETHUSDTM", "SOLUSDTM"];
+const HOME = { lat: 47.028, lon: -65.465, source: "chart" };
+const STEPS = [
+  ["pages", "1 · DEPLOY  ·  2 MIN", "This cabin page is already on its own GitHub Pages repo. The strategy desk was not changed. Bookmark the address above on the S23 Ultra."],
+  ["dev", "2 · S23 ULTRA DEVELOPER  ·  2 MIN", "Settings → About phone → Software information → tap Build number 7 times. Open Android Auto → About → tap the version 10 times → Developer settings → Unknown sources."],
+  ["aaad", "3 · AAAD + FERMATA  ·  2 MIN", "Install AAAD only from github.com/shmykelsa/AAAD. Other download sites are not the official app. In AAAD, install Fermata Auto, Fermata Control, and AABrowser so the 8-inch screen can open this page."],
+  ["car", "4 · SENTRA SR + KUCOIN  ·  3 MIN", "Use a data USB cable from the S23 Ultra to the 2025 Sentra SR. Accept Android Auto on the 8-inch display. Sign into KuCoin on the phone. This terminal only reads public prices."],
+  ["dual", "5 · BOOKMARK + DUAL SCREEN  ·  1 MIN", "On the car display, open AABrowser or Fermata's browser, load this page, and bookmark it. Leave KuCoin on the phone. Pull over before you send an order."]
+];
+
+let audioCtx = null;
+let book = "spot";
+let snap = null;
+let feedError = "";
+let fix = HOME;
+let done = {};
+try { done = JSON.parse(localStorage.getItem("sr-link-steps") || "{}"); } catch (e) { done = {}; }
+
+function arm() {
+  const Ctx = window.AudioContext || window.webkitAudioContext;
+  if (!audioCtx && Ctx) audioCtx = new Ctx();
+  if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+}
+function beep(freq) {
+  if (!audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = "square";
+  osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+  gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.05);
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+}
+function clock(d) {
+  d = d || new Date();
+  const time = new Intl.DateTimeFormat("en-GB", { timeZone: "America/Moncton", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).format(d);
+  const zone = new Intl.DateTimeFormat("en-US", { timeZone: "America/Moncton", timeZoneName: "short" }).formatToParts(d).find(p => p.type === "timeZoneName");
+  return time + " " + (zone ? zone.value : "AT");
+}
+function money(n) {
+  if (!Number.isFinite(n)) return "—";
+  return n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: n >= 1 ? 2 : 6 });
+}
+function pct(n) {
+  if (!Number.isFinite(n)) return "—";
+  return (n >= 0 ? "+" : "") + n.toFixed(2) + "%";
+}
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&", "<": "<", ">": ">", '"': """, "'": "&#39;" }[c]));
+}
+  const n = typeof v === "number" ? v : parseFloat(v);
+  return Number.isFinite(n) ? n : NaN;
+}
+function osm(lat, lon) {
+  const bbox = [lon - 0.14, lat - 0.09, lon + 0.14, lat + 0.09].map(n => n.toFixed(4)).join(",");
+  return "https://www.openstreetmap.org/export/embed.html?bbox=" + encodeURIComponent(bbox) + "&layer=mapnik&marker=" + lat.toFixed(4) + "%2C" + lon.toFixed(4);
+}
+function paintMap() {
+  const ns = fix.lat >= 0 ? "N" : "S";
+  const ew = fix.lon >= 0 ? "E" : "W";
+  document.getElementById("coords").textContent = Math.abs(fix.lat).toFixed(4) + "° " + ns + " · " + Math.abs(fix.lon).toFixed(4) + "° " + ew + " · " + (fix.source === "phone" ? "PHONE GPS" : "CITY CENTRE");
+  document.getElementById("mapframe").src = osm(fix.lat, fix.lon);
+}
+async function kjson(url) {
+  try {
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error("direct");
+    return await res.json();
+  } catch (e) {
+    const res = await fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(url), { cache: "no-store" });
+    if (!res.ok) throw new Error("proxy " + res.status);
+    return await res.json();
+  }
+}
+function paintTape() {
+  const host = document.getElementById("tape");
+  const rows = snap ? (book === "spot" ? snap.spot : snap.futures) : [];
+  if (!rows.length) {
+    host.innerHTML = "<p>> " + (feedError || "CONNECTING TO KUCOIN") + "</p>";
+    return;
+  }
+  if (book === "spot") {
+    host.innerHTML = "<table><thead><tr><th>PAIR</th><th>PRICE</th><th>24H</th><th>HIGH</th><th>LOW</th></tr></thead><tbody>" +
+      rows.map(r => "<tr><td><b>" + esc(r.symbol) + "</b></td><td>$" + money(r.price) + "</td><td class='" + (r.changePct < 0 ? "down" : "") + "'>" + pct(r.changePct) + "</td><td>$" + money(r.high) + "</td><td>$" + money(r.low) + "</td></tr>").join("") +
+      "</tbody></table>";
+  } else {
+    host.innerHTML = "<table><thead><tr><th>CONTRACT</th><th>MARK</th><th>INDEX</th><th>LAST</th><th>24H</th></tr></thead><tbody>" +
+      rows.map(r => "<tr><td><b>" + esc(r.symbol) + "</b></td><td>$" + money(r.mark) + "</td><td>$" + money(r.index) + "</td><td>$" + money(r.last) + "</td><td class='" + (r.changePct < 0 ? "down" : "") + "'>" + pct(r.changePct) + "</td></tr>").join("") +
+      "</tbody></table>";
+  }
+}
+function paintFeed() {
+  const label = feedError ? ("FEED " + feedError) : (snap ? ("FEED LIVE " + clock(new Date(snap.fetchedAt))) : "FEED LINKING");
+  document.getElementById("feed").textContent = label;
+  document.getElementById("feed").className = feedError ? "down" : "blink";
+  document.getElementById("stat-feed").textContent = feedError ? "LOST" : (snap ? "LIVE" : "LINKING");
+  document.getElementById("ping").textContent = snap && snap.pingMs != null ? snap.pingMs + " MS" : "—";
+}
+async function pull() {
+  const started = Date.now();
+  try {
+    const spots = await Promise.all(SPOTS.map(s => kjson("https://api.kucoin.com/api/v1/market/stats?symbol=" + s)));
+    const futs = await Promise.all(FUTS.map(s => kjson("https://api-futures.kucoin.com/api/v1/contracts/" + s)));
+    snap = {
+      fetchedAt: Date.now(),
+      pingMs: Date.now() - started,
+      spot: spots.map((raw, i) => {
+        const d = raw.data || {};
+        return { symbol: d.symbol || SPOTS[i], price: num(d.last), changePct: num(d.changeRate) * 100, high: num(d.high), low: num(d.low) };
+      }),
+      futures: futs.map((raw, i) => {
+        const d = raw.data || {};
+        return { symbol: d.symbol || FUTS[i], mark: num(d.markPrice), index: num(d.indexPrice), last: num(d.lastTradePrice), changePct: num(d.priceChgPct) * 100 };
+      })
+    };
+    feedError = "";
+  } catch (err) {
+    feedError = err && err.message ? err.message : "FEED LOST";
+  }
+  paintTape();
+  paintFeed();
+}
+function renderSteps() {
+  document.getElementById("steps").innerHTML = STEPS.map(s => {
+    const on = !!done[s[0]];
+    return "<button type='button' class='step" + (on ? " is-done" : "") + "' data-step='" + s[0] + "'><span class='box'>" + (on ? "X" : "") + "</span><span><b>" + s[1] + "</b><br><small>" + s[2] + "</small></span></button>";
+  }).join("");
+}
+
+document.getElementById("pages-url").textContent = PAGES;
+paintMap();
+renderSteps();
+setTimeout(() => { const b = document.getElementById("boot"); if (b) b.remove(); }, 1100);
+setInterval(() => {
+  const t = clock();
+  document.getElementById("clock").textContent = t;
+  document.getElementById("stat-clock").textContent = t;
+}, 1000);
+document.getElementById("clock").textContent = clock();
+document.getElementById("stat-clock").textContent = clock();
+
+const saved = localStorage.getItem("sr-link-theme");
+if (saved === "amber") { document.body.classList.add("amber"); document.getElementById("theme").textContent = "COLOR AMBER"; }
+
+document.body.addEventListener("pointerdown", arm, { once: true });
+document.querySelectorAll("[data-tab]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    arm(); beep(980);
+    document.querySelectorAll("[data-tab]").forEach(b => b.classList.remove("is-on"));
+    btn.classList.add("is-on");
+    document.querySelectorAll(".panel").forEach(p => p.classList.remove("on"));
+    document.getElementById(btn.dataset.tab).classList.add("on");
+  });
+});
+document.getElementById("theme").addEventListener("click", () => {
+  arm(); beep(620);
+  const on = document.body.classList.toggle("amber");
+  localStorage.setItem("sr-link-theme", on ? "amber" : "green");
+  document.getElementById("theme").textContent = on ? "COLOR AMBER" : "COLOR GREEN";
+});
+document.getElementById("spot-btn").addEventListener("click", () => { arm(); beep(760); book = "spot"; document.getElementById("spot-btn").classList.add("is-on"); document.getElementById("fut-btn").classList.remove("is-on"); paintTape(); });
+document.getElementById("fut-btn").addEventListener("click", () => { arm(); beep(760); book = "futures"; document.getElementById("fut-btn").classList.add("is-on"); document.getElementById("spot-btn").classList.remove("is-on"); paintTape(); });
+document.getElementById("fix").addEventListener("click", () => {
+  arm(); beep(540);
+  if (!navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(pos => {
+    fix = { lat: pos.coords.latitude, lon: pos.coords.longitude, source: "phone" };
+    paintMap();
+  }, () => { fix = HOME; paintMap(); }, { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 });
+});
+document.getElementById("copy").addEventListener("click", async () => {
+  arm(); beep(720);
+  try { await navigator.clipboard.writeText(PAGES); document.getElementById("copy").textContent = "COPIED"; setTimeout(() => document.getElementById("copy").textContent = "COPY", 1600); } catch (e) {}
+});
+document.getElementById("steps").addEventListener("click", (ev) => {
+  const btn = ev.target.closest("[data-step]");
+  if (!btn) return;
+  arm(); beep(640);
+  done[btn.dataset.step] = !done[btn.dataset.step];
+  localStorage.setItem("sr-link-steps", JSON.stringify(done));
+  renderSteps();
+});
+document.querySelectorAll(".app-card").forEach(a => a.addEventListener("click", () => { arm(); beep(840); }));
+pull();
+setInterval(pull, 10000);
+</script>
+</body>
+</html>

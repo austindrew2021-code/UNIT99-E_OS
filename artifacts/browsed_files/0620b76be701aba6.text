@@ -1,0 +1,141 @@
+# Feature Guide
+
+## System and Launcher
+
+- Replaces the Android Home launcher.
+- Runs full-screen in landscape mode.
+- Keeps the screen on while active.
+- Starts a small foreground service so Android is less likely to kill the launcher.
+- Can auto-open after device boot.
+- Can return to the dashboard when Home is pressed while Pip-OS is already open.
+- Can reappear on screen wake or supported ACC power-on broadcasts from some Rockchip head units.
+- Optional `PipBooter` helper APK can be selected as a head-unit startup/navigation app to trigger Home and open Pip-OS on units that restore the last-used app instead of launching Home.
+
+## Boot Experience
+
+- Three-phase boot sequence: memory dump, PIP-OS system log, and Vault Boy/logo reveal.
+- Boot sounds are synchronized with the animation.
+- Tap anywhere during boot to skip to the main UI.
+- `SET > DEV` includes a boot preloading toggle for slower devices (NOT RECOMMENDED EVEN ON SLOW DEVICES).
+
+## DASH
+
+The dashboard is split into left and right widget slots. Each slot can show a different widget.
+
+Available widgets:
+
+- `SPEEDOMETER`: clean GPS speed gauge with optional app shortcuts and no extra GPS-lock or `SPEED` labels.
+- `MEDIA PLAYER`: current track, album art, media controls, and compact previous/next station triangles during local Radio playback.
+- `MUSIC VISUALIZER`: title, artist, album, media controls, and a live Waveform, Equalizer, or Spectrum display.
+- `GPS INFO`: GPS fix, heading, coordinates, and radar-style visual.
+- `MAP`: offline map and POI view.
+- `ROAD VIEW`: moving perspective road with offline direction, settlement, road, and speed-limit information.
+- `TACHOMETER`: OBD-II RPM gauge.
+- `COOLANT TEMP`: focused coolant temperature display.
+- `OBD-II GAUGES`: compact RPM, coolant, voltage, and load gauges.
+- `VAULT-TEC CLOCK`: branded live clock.
+- `GEAR VAULT BOY`: speed-reactive Vault Boy display.
+- `VAULT BOY PIP`: rotating Pip-Boy image slideshow.
+- `BLANK`: empty slot.
+
+### Road View
+
+- The top header places the abbreviated compass direction in a circle on the left, the nearest city/town/village and road name in the center, and the road speed limit in a matching circle on the right.
+- Road names and `maxspeed` values come from enabled offline Mapsforge `.map` files. Settlement names come from local POI data. There is no Android Geocoder or network lookup.
+- The speed-limit circle follows the configured KPH/MPH setting and shows `--` when the active map has no usable speed limit.
+- When no local settlement is available, the area falls back to the label of the enabled map covering the current GPS position. Custom map domains take priority; the primary map is only the final fallback.
+- Perspective motion always uses GPS speed, including mock-route speed. It remains stationary at 1 km/h or below, starts above 1 km/h, and is not affected by OBD-II or demo OBD speed.
+- GPS bearing turns the road and navigation arrow, then smoothly recenters on straight sections even if Android stops emitting new bearing samples.
+- Center-line marks keep even spacing as the road perspective advances.
+- Optional roadside Pip-Boys may appear at any moving speed. They can be disabled and sized from 50% to 400% under `SET > EFFECTS`; the default is 200%.
+
+### Music Visualizer
+
+- Double-tap the dashboard visualizer to cycle `WAVEFORM`, `EQUALIZER`, and `SPECTRUM`.
+- The dashboard and Radio remember their visualizer modes independently.
+- Equalizer and Spectrum use filled segmented bars. Spectrum is mirrored with low frequencies in the center and higher frequencies toward the edges.
+- Waveform uses one continuous capture path rather than repeating the same pattern, with density-aware rendering for high-DPI screens.
+- Radio and dashboard visualizers share the same live-audio capture and tuning controls under `SET > AUDIO`.
+
+## RADIO
+
+- Plays local radio stations from folders on device storage.
+- Adds an `EXTERNAL MUSIC PLAYER` station for controlling another Android media app.
+- Shows track title, artist, station, playback buttons, and a Waveform, Equalizer, or Spectrum visualizer.
+- Double-tap the Radio visualizer to change its independently saved mode.
+- Uses a compact star beside each local station to add or remove it from favorites.
+- Adds `FAVOURITE RADIO MIX`, which shuffles songs from every favorite local station.
+- Keeps folder navigation in the station list instead of duplicating folder controls and folder-name text in the playback panel.
+- Supports optional live audio capture and a synthetic fallback display.
+- Automatically stops local radio if an external app starts playing.
+- Publishes Pip-OS radio playback as an Android media session and exposes improved external-session information and controls.
+
+## Offline Maps and POI
+
+- Downloads catalog Mapsforge packages or imports custom `.map` and `.poi` files.
+- Groups matching custom files such as `nevada.map` and `nevada.poi` into one named package.
+- Custom packages can be enabled, disabled, favorited, deleted, or made primary, and can remain active alongside catalog maps.
+- Map and Road View labels switch automatically when GPS crosses into another enabled catalog or custom map domain.
+- Imported files are copied into app-managed storage without changing the source files.
+- Shared-folder fallbacks support `PipCarRadio/custom_maps` when a head unit's document picker is unusable.
+
+## STATS
+
+- S.P.E.C.I.A.L.-style vehicle status display.
+
+When connected, the live OBD-II values are:
+
+- `S`: speed in KPH.
+- `P`: power/RPM.
+- `E`: engine coolant temperature.
+- `C`: charge/voltage.
+- `I`: intake air temperature.
+- `A`: airflow/MAF.
+- `L`: engine load.
+
+Additional behavior:
+
+- Global Geiger counter SFX for values exceeding thresholds set in `SET > STATS`.
+- Shows diagnostic trouble codes after a DTC read.
+- Includes quick connect and disconnect controls.
+- Includes demo data mode under `SET > DEV`.
+- Long-press the center image to open the image selector.
+- Choose the `UNIT 99-E`, `GEAR VAULT BOY`, or `VAULT-TEC` preset, or import and remove transparent custom PNGs.
+- Choose `MONOCHROME` theme coloring or `COLOR + TINT` image composition.
+
+## APPS
+
+- Full app drawer for installed launchable apps.
+- Six-column grid layout.
+- Tapping an app launches it.
+- The app list refreshes when apps are installed, removed, changed, or updated.
+
+## Shortcuts
+
+- Dashboard, media, speedometer, and top-bar shortcut slots can launch selected apps.
+- The top speed readout can open recent apps, Android system Recents, Android Auto, CarPlay, or a user-entered Android package.
+- Explicit `package/activity` targets are supported, with a package-launch fallback if the requested activity cannot open.
+
+## SET
+
+Two-panel settings interface with categories:
+
+- `DISPLAY`
+- `MAP`
+- `AUDIO`
+- `HUD`
+- `EFFECTS`
+- `APPS`
+- `OBD-II`
+- `STATS`
+- `DEV`
+- `SYSTEM`
+- `ABOUT`
+
+The About panel includes Donate, project/social information, the installed version, and an Updates link to the [UNIT 99-E OS GitHub releases page](https://github.com/ShadCimm/UNIT99-E_OS/releases).
+
+## Personalization and Performance
+
+- Theme choices include Green, Amber, White, and Electric Blue. Electric Blue is also available for automatic day/night selection.
+- The Vault Boy Pip slideshow decodes the next image away from the main UI thread and retains its last image when switching widgets, reducing hitches and blank flashes.
+- Density-aware visualizer rendering keeps Waveform, Equalizer, and Spectrum output stable on high-DPI head units.
