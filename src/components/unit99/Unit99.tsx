@@ -902,6 +902,9 @@ export function Unit99() {
               [LOAD AUDIO]
               <input hidden type="file" accept="audio/*,.mp3,.ogg,.wav,.flac,.m4a" multiple onChange={(event) => loadTracks(event.target.files)} />
             </label>
+            <a className="hud-link" href="/unit99/sounds/silent-loop.wav" download="silent-loop.wav">
+              [SAVE SILENT LOOP]
+            </a>
             <Transport onPrev={() => showTrack(trackIndex - 1)} onPlay={toggleRadio} onNext={() => showTrack(trackIndex + 1)} />
           </section>
         )}
