@@ -33,7 +33,7 @@ ul > li.nav-item.active >  a.nav-link{
 
 }
 
-.navbar.navbar-expand-lg .navbar-nav > li {
+.navbar.navbar-expand .navbar-nav > li {
     padding: 0px 20px;
 }
 
@@ -66,7 +66,7 @@ ul > li.nav-item.active >  a.nav-link{
     margin: 10px;
 }
 
-.navbar.navbar-light.navbar-expand-lg .navbar-nav {
+.navbar.navbar-light.navbar-expand .navbar-nav {
     margin: 0px 200px;
 }
 
@@ -90,6 +90,39 @@ ul > li.nav-item.active >  a.nav-link{
 
 .navbar-nav{
     width: 100%;
+}
+
+.apk-host{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin: 0 10px 8px;
+    padding: 8px 14px;
+    border: 2px solid #14fe17;
+    color: #14fe17;
+    text-decoration: none;
+    text-shadow: 0px 0.3px 1px #10af12;
+    font-size: 18px;
+    line-height: 1.2;
+    background: #272b23;
+    position: relative;
+    z-index: 2;
+}
+
+.apk-host:hover,
+.apk-host:focus{
+    color: #d6ffd6;
+    background: #143016;
+}
+
+@media (max-width: 900px){
+    .navbar.navbar-light.navbar-expand .navbar-nav {
+        margin: 0;
+    }
+    .apk-host{
+        font-size: 15px;
+    }
 }
 
 .navbar ul.navbar-nav > li{
