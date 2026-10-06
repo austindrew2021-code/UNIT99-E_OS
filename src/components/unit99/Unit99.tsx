@@ -558,7 +558,6 @@ export function Unit99() {
   const [tracks, setTracks] = useState<{ name: string; url: string }[]>([]);
   const [trackIndex, setTrackIndex] = useState(0);
   const radioRef = useRef<HTMLAudioElement | null>(null);
-  const silentRef = useRef<HTMLAudioElement | null>(null);
   const trackUrls = useRef<string[]>([]);
   const [demo, setDemo] = useState({ s: 0, p: 0, e: 0, c: 0, i: 0, a: 0, l: 0 });
   const noise = useMemo(noiseLines, []);
@@ -779,26 +778,6 @@ export function Unit99() {
 
   useEffect(() => () => trackUrls.current.forEach((url) => URL.revokeObjectURL(url)), []);
 
-  useEffect(() => {
-    const loop = silentRef.current;
-    if (!loop) return;
-    const start = () => {
-      loop.loop = true;
-      void loop.play().catch(() => undefined);
-    };
-    start();
-    const onGesture = () => start();
-    const onVisible = () => {
-      if (!document.hidden) start();
-    };
-    window.addEventListener("pointerdown", onGesture);
-    document.addEventListener("visibilitychange", onVisible);
-    return () => {
-      window.removeEventListener("pointerdown", onGesture);
-      document.removeEventListener("visibilitychange", onVisible);
-    };
-  }, []);
-
   return (
     <div
       className={phosphorFlash ? "hud is-glow is-flash" : crtBleed && !lowPower ? "hud is-glow is-bleed" : "hud is-glow"}
@@ -810,7 +789,6 @@ export function Unit99() {
         ["--wm-op" as string]: Math.min(watermarkOpacity / 100, 1),
       }}
     >
-      <audio ref={silentRef} src="/unit99/sounds/silent-loop.wav" loop autoPlay playsInline preload="auto" />
       {lowPower ? null : crtBleed ? <div className="hud-scan" /> : null}
       {booting ? null : showLogo ? <img className="hud-gear" src="/unit99/apk/gearvaultboy.png" alt="" /> : null}
       {booting ? null : showBoy ? <img className="hud-boy-mark" src="/unit99/apk/boot_frame_8.png" alt="" /> : null}
@@ -926,6 +904,9 @@ export function Unit99() {
             </label>
             <a className="hud-link" href="/unit99/sounds/silent-loop.wav" download="silent-loop.wav">
               [SAVE SILENT LOOP]
+            </a>
+            <a className="hud-link" href="https://media.githubusercontent.com/media/austindrew2021-code/UNIT99-E_OS/main/public/unit99/sounds/silent.m3u">
+              [SILENT PLAYLIST]
             </a>
             <Transport onPrev={() => showTrack(trackIndex - 1)} onPlay={toggleRadio} onNext={() => showTrack(trackIndex + 1)} />
           </section>
