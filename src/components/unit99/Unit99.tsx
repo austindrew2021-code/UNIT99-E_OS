@@ -486,6 +486,7 @@ function Transport({ onPrev, onPlay, onNext }: { onPrev: () => void; onPlay: () 
 
 export function Unit99() {
   const [booting, setBooting] = useState(true);
+  const [bootRun, setBootRun] = useState(0);
   const [bootPhase, setBootPhase] = useState(0);
   const [bootFrame, setBootFrame] = useState(0);
   const [rom, setRom] = useState(0);
@@ -617,7 +618,7 @@ export function Unit99() {
       window.setTimeout(() => setBooting(false), 15500 + 1500 + BOOT_FRAMES.length * 125 + 300),
     ];
     return () => timers.forEach(window.clearTimeout);
-  }, [booting]);
+  }, [booting, bootRun]);
 
   useEffect(() => {
     if (!booting || bootPhase < 3) return;
@@ -640,6 +641,34 @@ export function Unit99() {
     const id = window.setInterval(() => setRom((n) => Math.min(ROM.length, n + 1)), 420);
     return () => window.clearInterval(id);
   }, [booting, bootPhase]);
+
+  useEffect(() => {
+    let hiddenAt = 0;
+    const replay = () => {
+      setBootPhase(0);
+      setBootFrame(0);
+      setRom(0);
+      setBooting(true);
+      setBootRun((n) => n + 1);
+    };
+    const onVisibility = () => {
+      if (document.hidden) {
+        hiddenAt = Date.now();
+        return;
+      }
+      if (hiddenAt && Date.now() - hiddenAt > 1500) replay();
+      hiddenAt = 0;
+    };
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) replay();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("pageshow", onPageShow);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("pageshow", onPageShow);
+    };
+  }, []);
 
   const liveKph = obdLive?.speed ?? gpsKph ?? 0;
   const arc = obdLive?.rpm != null ? Math.min(obdLive.rpm / 8000, 1) : Math.min(liveKph / 200, 1);
